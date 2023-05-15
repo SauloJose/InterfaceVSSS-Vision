@@ -1,0 +1,33 @@
+Variavel       |         ID        |      Value     |
+----------------------------------------------------|
+CamUSBPath              I003
+ImgPath                 I004
+VideoPath               I005  
+UseMode                 I006
+VertField               I008
+DefCam                  I009
+CalColor                I00B
+PrincColorT1            I00E
+R1color1                I00F
+R1color2                I010
+R1color3                I011
+PrincColorT2            I013
+R2color1                I014
+R2color2                I015
+R2color3                I016
+DEBUG                   I018
+EXECMode                I019
+------------------------------------------------------
+Interpretador: Python 3.9.13
+
+Dimensão da janela: 1100x750
+
+Dimensão do frame de vídeo: 748x510
+
+Bibliotecas necessárias:
+-Opencv;
+-Tkinter;
+-Numpy;
+-PIL;
+
+Por favor, instalar essas bibliteocas.
