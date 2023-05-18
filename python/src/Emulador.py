@@ -1,21 +1,24 @@
 from modulos import *
 from TreeMenu import *
 from viewer import MyViewer
+
 #Classe para o emulador, com base nos dados carregados...
 #Carrego a treeView, e tiro os dados dela, assim posso iniciar variáveis da emulação.
 class Emulator:
-    def __init__(self, TreeMenu: TreeMenu,Viewer: MyViewer, IdCap: int, btn_run: Button, btn_stop: Button):
+    def __init__(self, TreeMenu: TreeMenu, Viewer: MyViewer, IdCap: int, btn_run: Button, btn_stop: Button):
         #Recuperando as variáveis do emulador, considerando que é uma treeview
         #Carregando como valores internos do Emulador.
+        print('[EMULADOR] Emulador foi construído')
         self.TreeMain = TreeMenu
         self.Viewer = Viewer
         self.IdCap = IdCap
         self.btn_run = btn_run
         self.btn_stop = btn_stop
-
-
-        #Carregando variáveis de configuração
-        self.load_vars()
+        self.Mode = MODE_DEFAULT
+        self.isRuningCam = False #Variável para thread do vídeo
+        self.thread = None
+        #configurando o viewer
+        self.Viewer.config()
         
     #Método para carregar as variáveis internas que foram salvas no arquivo config.json
     def load_vars(self):
@@ -37,10 +40,44 @@ class Emulator:
         self.R2color3 = self.TreeMain.tree.item('I016','value')[0]
         self.DEBUG = self.TreeMain.tree.item('I018','value')[0]
         self.EXECMode = self.TreeMain.tree.item('I019','value')[0]
-    
+        
+        
+        #Configurando as entradas para a forma mais genêrica
+        self.UseMode = self.format_var(self.UseMode)
+        self.CalColor = self.format_var(self.CalColor)
+        self.PrincColorT1 = self.format_var(self.PrincColorT1)
+        self.R1color1 = self.format_var(self.R1color1)
+        self.R1color2 = self.format_var(self.R1color2)
+        self.R1color3 = self.format_var(self.R1color3)
+        self.PrincColorT2 = self.format_var(self.PrincColorT2)
+        self.R2color1 = self.format_var(self.R2color1)
+        self.R2color2 = self.format_var(self.R2color2)
+        self.R2color3 = self.format_var(self.R2color3)
+        self.EXECMode = self.format_var(self.EXECMode)
+        self.DEBUG = self.format_var(self.DEBUG)
+        
+        
+        #Observa qual modo o emulador foi configurado.
+        if(self.UseMode== 'camera'): #Modo camera
+            self.Mode = MODE_USB_CAM
+            
+        elif(self.UseMode == 'imagem'): #Modo Imagem
+            self.Mode = MODE_IMAGE
+            
+        elif(self.UseMode == 'video'):
+            self.Mode = MODE_VIDEO_CAM
+            
+        else:
+            print('[EMULADOR] Valor inválido')
+            self.Mode = MODE_DEFAULT
+            self.stop() #Para o emulador.
+            
+        #CÂMERA => camera
     #Método apenas para ver quais variáveis está no emulador.
     def show_variables(self):
-        msg=f"""====Emulador===
+        msg=f"""
+        [EMULADOR]
+        ====Emulador===
         CamUSB: {self.CamUSB}
         ImgPath: {self.ImgPath}
         VideoPath: {self.VideoPath}
@@ -64,20 +101,123 @@ class Emulator:
 
     #Método para o emulador exibir as imagens
     def init(self):
-        print("Emulador iniciado")
-        cap = cv2.VideoCapture(self.IdCap)
-
-
-    #Método para pausar o Emulador
-    def pause(self):
-        print('Emulador Pausado')
-
+        print("[EMULADOR] Configurando variaveis")
+        self.Viewer.config()
+        
+        #Inicializa o viewer
+        if(self.Mode== MODE_USB_CAM): #Modo camera
+            print('[EMULADOR] Emulador em modo de processamento de imagem da Camera USB')
+            #Configurando Viewer para modo de exibição de câmera            
+            #Entrada do vídeo
+            self.btn_run.pack_forget() # torna o botão "run" invisível
+            self.btn_stop.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
+            self.pause = False #Camera Não pausada
+            self.delay = 14 #14ms
+            
+            self.startCameraThread()
+            
+        elif(self.Mode ==  MODE_IMAGE): #Modo Imagem
+            print('[EMULADOR] Emulador em modo de processamento de Imagem')
+            #Configurar viewer para modo de exibição imagem
+            #Entrada do vídeo
+            self.btn_stop.pack_forget() # torna o botão "run" invisível
+            self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
+            self.processImage()
+            
+        elif(self.Mode == MODE_VIDEO_CAM):
+            print('[EMULADOR] Emulador em modo de processamento de Video')
+            #configurar viewer para modo de exibição de vídeo
+            self.btn_stop.pack_forget() # torna o botão "run" invisível
+            self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
+            self.processVideo()
+            
+        else:
+            self.Mode == MODE_DEFAULT
+            print('[EMULADOR] Entrada inválida')
+            self.btn_stop.pack_forget() # torna o botão "run" invisível
+            self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
+            self.stop() #Para o emulador.
+        
+    
     #Método para Parar a Emulação.
     def stop(self):
-        print('Emulador parado')
+        print('[EMULADOR] Emulador teve sua execução parada.')
+        #Inicializa o viewer
+        if(self.Mode== MODE_USB_CAM): #Modo camera
+            #Configurando Viewer para modo de exibição de câmera
+            #Entrada do vídeo
+            self.stopCameraThread()
+            self.btn_run.pack_forget() # torna o botão "run" invisível
+            self.btn_stop.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
+            self.pause = True #Camera Não pausada
+            
+        elif(self.Mode ==  MODE_IMAGE): #Modo Imagem
+            #Configurar viewer para modo de exibição imagem
+            #Entrada do vídeo
+            self.btn_stop.pack_forget() # torna o botão "run" invisível
+            self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
+            
+        elif(self.Mode == MODE_VIDEO_CAM):
+            #configurar viewer para modo de exibição de vídeo
+            self.btn_stop.pack_forget() # torna o botão "run" invisível
+            self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
+            
+        else:
+            self.Mode = MODE_DEFAULT
+            self.btn_stop.pack_forget() # torna o botão "run" invisível
+            self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
+        
+        #Configurando para base novamente
+        self.Mode = MODE_DEFAULT
+        self.Viewer.default_mode()
 
-
+    #Formatando valores para o caso mínimo
+    def format_var(self, var):
+        var = unidecode.unidecode(var)
+        var = var.lower()
+        return var
+    
+    #Definindo processos do emulador
+    #processo para Camera
+    def processUSB(self):
+        #Iniciando uma nova thread para esse processamento.
+        while self.isRuningCam:
+            try:
+                ret, frame = self.capture.read()
+                if not ret:
+                    #Exibindo imagem
+                    self.Viewer.show(frame)
+                self.Viewer.window.after(self.delay,self.processUSB)
+            except:
+                print('[EMULADOR] Ocorreu um erro')
+                break
+        self.capture.release()
+        
+    #Processo para imagem
+    def processImage(self):
+        print(self.ImgPath)
+        img = cv2.imread(self.ImgPath)
+        self.Viewer.show(img)
+        print("[EMULADOR] Processando imagem")
+    
+    #Processo para vídeo
+    def processVideo(self):
+        print(self.VideoPath)
+        print("[EMULADOR] Processando vídeo")  
+    
+    
+    #Definição de threads para exibição do processamento
+    def startCameraThread(self):
+        self.isRuningCam = True
+        self.capture = cv2.VideoCapture(self.IdCap)
+        self.thread = threading.Thread(target=self.processUSB)
+        self.thread.start()
+    
+    #parar a thread da camera
+    def stopCameraThread(self):
+        self.is_running = False 
+        
 #SEGURANÇA
 if __name__ == "__main__":
-    print("Módulo sendo executado como funcao principal")
+    print("[EMULADOR] Módulo sendo executado como funcao principal")
 

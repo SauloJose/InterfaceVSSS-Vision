@@ -38,6 +38,13 @@ class App():
         #Adicionando menu
         self.Menu()
         
+        #Gerando Emulador
+        #Configurando Viewer
+        self.viewer  = MyViewer(self.aba1)  
+        
+        #Criando emulador
+        self.Emulador = Emulator(self.menu, self.viewer, 0, self.btn_run, self.btn_stop)
+        
         #executando looping
         root.mainloop()
 
@@ -129,8 +136,7 @@ class App():
         self.save_button = Button(self.action_frame, text='Salvar', command=self.save_config)
         self.save_button.place(relx=0.3, rely=0.90, relwidth=0.4, relheight=0.05)
 
-            
-
+    #Adicionando funcionalidades da emulação
     def widgets_emulate_frame(self):
         #Aqui é o frame para iniciar a emulação, com base nos dados.
         self.Label_run_emulate = Label(self.emulate_frame,text="Estado da Emulação")
@@ -143,7 +149,7 @@ class App():
         #Medida de segurança para manter a variável sempre bem definida.
         self.menu.att_node_id('I019','Parado')
         self.menu.save_to_json('config')
-    
+        
     
     #definindo menu
     def Menu(self):
@@ -156,8 +162,8 @@ class App():
             self.root.destroy()
 
         def reset_app() -> None:
-            print("retornando a configuração de fábrica")
-            self.stop_image()
+            print("[APP] retornando a configuração de fábrica")
+            self.stop_emulate()
             self.menu.clear_tree()
             self.menu.load_from_json_file('src/data/reset.json')
             self.menu.save_to_json('config')
@@ -179,7 +185,7 @@ class App():
         # Salva os dados em um arquivo JSON
         with open('config.json', 'w',encoding="utf-8") as f:
             json.dump(self.data, f,ensure_ascii=False)
-        print('config salvas com sucesso!')
+        print('[APP] config salvas com sucesso!')
 
     #Função base para construír a árvore padrão
     def build_tree_menu(self):
@@ -247,29 +253,25 @@ class App():
 
     #MISSÃO ATUAL -> BOTÃO DE RUN E STOP.
     def init_emulate(self):
+        #Iniciando Emulação
+        print("[APP] Emulação Iniciada")
+        self.Emulador.load_vars()
+        self.Emulador.show_variables()
+        
         #Puxa variáveis que estão na árvore
         self.menu.save_to_json('config') #Salvando os dados antes de iniciar a coleta de dados.
 
-        #Gerando o Emulador e dando início a ele.
-        #Adicionando o Emulador ao aplicativo
-        self.Emulador = Emulator(self.menu, self.aba1, 0, self.btn_run, self.btn_stop)
-        self.Emulador.init();
-
-        #Chamando WebCam
-        cap = cv2.VideoCapture(0)
-        self.viewer = MyViewer(self.aba1, cap)
-
-        #Entrada do víde
-        self.btn_run.pack_forget() # torna o botão "run" invisível
-        self.btn_stop.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
+        #Gerando o Emulador e dando início a ele.    
+        self.Emulador.init() #Inicializa o emulador
         self.menu.att_node_id('I019','Em execução.')
         self.menu.save_to_json('config')
 
     def stop_emulate(self):
         self.Emulador.stop()
-        self.viewer.destroy_viewer()
+        #self.viewer.destroy_viewer()
         self.btn_stop.pack_forget() # torna o botão "run" invisível
         self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
+        
         self.menu.att_node_id('I019','Parado')
         self.menu.save_to_json('config')
 
@@ -277,7 +279,8 @@ class App():
     def load_variables_tree(self):
         #Carregando os dados
         data = self.menu.get_tree_data()
+        return data
         
 #Chamando aplicação
 if __name__ == "__main__":
-    print("Módulo sendo executado como funcao principal")
+    print("[APP] Módulo sendo executado como funcao principal")

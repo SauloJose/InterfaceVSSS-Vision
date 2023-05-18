@@ -2,6 +2,7 @@ import cv2
 from PIL import Image, ImageTk
 import tkinter as tk
 
+#Ele irá apenas exibir a imagem, independende de ser ou não vídeo
 class MyViewer:
     def __init__(self, window, cap):
         self.window = window
