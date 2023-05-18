@@ -21,7 +21,7 @@
                     "I004": {
                         "name": "Imagem Path",
                         "value": [
-                            "---"
+                            "src/vision/Slide7.PNG"
                         ],
                         "children": {}
                     },
@@ -35,26 +35,69 @@
                     "I006": {
                         "name": "Modo de Uso",
                         "value": [
-                            "Imagem"
+                            "imagem"
                         ],
                         "children": {}
                     }
                 }
             },
             "I007": {
-                "name": "Calibração da Câmera",
+                "name": "Calibração do algorítmo",
                 "value": [
                     ""
                 ],
                 "children": {
                     "I008": {
+                        "name": "Borda da janela",
+                        "value": [
+                            "10"
+                        ],
+                        "children": {}
+                    },
+                    "I009": {
+                        "name": "offSet da Erosão",
+                        "value": [
+                            "3"
+                        ],
+                        "children": {}
+                    },
+                    "I00A": {
+                        "name": "Binarização Threshold",
+                        "value": [
+                            "235"
+                        ],
+                        "children": {}
+                    },
+                    "I00B": {
+                        "name": "Dim. Matriz TOPHAT",
+                        "value": [
+                            "30"
+                        ],
+                        "children": {}
+                    },
+                    "I00C": {
+                        "name": "Debug do Algorítmo",
+                        "value": [
+                            "False"
+                        ],
+                        "children": {}
+                    }
+                }
+            },
+            "I00D": {
+                "name": "Calibração da Câmera",
+                "value": [
+                    ""
+                ],
+                "children": {
+                    "I00E": {
                         "name": "Extremos do Campo",
                         "value": [
                             "- , -, -, -"
                         ],
                         "children": {}
                     },
-                    "I009": {
+                    "I00F": {
                         "name": "Deformações",
                         "value": [
                             "N°,3"
@@ -63,13 +106,13 @@
                     }
                 }
             },
-            "I00A": {
+            "I010": {
                 "name": "Calibração das Cores",
                 "value": [
                     ""
                 ],
                 "children": {
-                    "I00B": {
+                    "I011": {
                         "name": "Cor",
                         "value": [
                             "Azul"
@@ -78,76 +121,76 @@
                     }
                 }
             },
-            "I00C": {
+            "I012": {
                 "name": "Configurações dos Times",
                 "value": [
                     ""
                 ],
                 "children": {
-                    "I00D": {
+                    "I013": {
                         "name": "Time 1",
                         "value": [
                             ""
                         ],
                         "children": {
-                            "I00E": {
+                            "I014": {
                                 "name": "Cor Principal T1",
                                 "value": [
-                                    "Rosa"
+                                    "Azul"
                                 ],
                                 "children": {}
                             },
-                            "I00F": {
+                            "I015": {
                                 "name": "T1_robo 1",
                                 "value": [
-                                    "Roxo"
+                                    "roxo"
                                 ],
                                 "children": {}
                             },
-                            "I010": {
+                            "I016": {
                                 "name": "T1_robo 2",
                                 "value": [
                                     "Verde"
                                 ],
                                 "children": {}
                             },
-                            "I011": {
+                            "I017": {
                                 "name": "T1_robo 3",
                                 "value": [
-                                    "Amarelo"
+                                    "Vermelho"
                                 ],
                                 "children": {}
                             }
                         }
                     },
-                    "I012": {
+                    "I018": {
                         "name": "Time 2",
                         "value": [
                             ""
                         ],
                         "children": {
-                            "I013": {
+                            "I019": {
                                 "name": "Cor Principal T2",
                                 "value": [
-                                    "Amarelo"
+                                    "Em execução."
                                 ],
                                 "children": {}
                             },
-                            "I014": {
+                            "I01A": {
                                 "name": "T2_robo 1",
                                 "value": [
                                     "Verde"
                                 ],
                                 "children": {}
                             },
-                            "I015": {
+                            "I01B": {
                                 "name": "T2_robo 2",
                                 "value": [
-                                    "Vermelho"
+                                    "Roxo"
                                 ],
                                 "children": {}
                             },
-                            "I016": {
+                            "I01C": {
                                 "name": "T2_robo 3",
                                 "value": [
                                     "Rosa"
@@ -158,20 +201,20 @@
                     }
                 }
             },
-            "I017": {
+            "I01D": {
                 "name": "Configurações do Emulador",
                 "value": [
                     ""
                 ],
                 "children": {
-                    "I018": {
+                    "I01E": {
                         "name": "Debug",
                         "value": [
                             "False"
                         ],
                         "children": {}
                     },
-                    "I019": {
+                    "I01F": {
                         "name": "Estado de Execução",
                         "value": [
                             "Parado"

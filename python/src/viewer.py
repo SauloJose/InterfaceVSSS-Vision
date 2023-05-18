@@ -7,7 +7,6 @@ class MyViewer:
         #Frame que irá ser utilizado
         self.window = window
 
-
     #Método para configurar o viewer para a função definida
     def config(self):
         print("[VIEWER] Viewer em modo de configuração")
@@ -15,8 +14,8 @@ class MyViewer:
         self.canvas = Canvas(self.window, width=780, height=510)
         self.canvas.place(relx=0, rely=0)
         self.canvas.create_rectangle(0, 0, 748, 510, fill="black")
-        
 
+        
     #Resetando as configurações do viewer para forma padrão
     def resetConfig(self):
         print("[VIEWER] Resetando configuração de exibição")
@@ -57,7 +56,9 @@ class MyViewer:
         y = (max_height - new_height) // 2
     
         self.canvas.create_image(x,y, anchor=NW, image=self.image)
-            
+    
+    
+    #definindo o
 #Chamando aplicação
 if __name__ == "__main__":
     print("[VIEWER] Módulo sendo executado como funcao principal")

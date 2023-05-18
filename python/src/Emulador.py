@@ -16,7 +16,10 @@ class Emulator:
         self.btn_stop = btn_stop
         self.Mode = MODE_DEFAULT
         self.isRuningCam = False #Variável para thread do vídeo
+        self.DEBUGA = False
         self.thread = None
+        self.capture = None
+        self.delay = 14 #ms
         #configurando o viewer
         self.Viewer.config()
         
@@ -27,19 +30,24 @@ class Emulator:
         self.ImgPath = self.TreeMain.tree.item('I004','value')[0]
         self.VideoPath = self.TreeMain.tree.item('I005','value')[0]
         self.UseMode = self.TreeMain.tree.item('I006','value')[0]
-        self.VertField =self.TreeMain.tree.item('I008','value')[0]
-        self.DefCam = self.TreeMain.tree.item('I009','value')[0]
-        self.CalColor = self.TreeMain.tree.item('I00B','value')[0]
-        self.PrincColorT1 = self.TreeMain.tree.item('I00E','value')[0]
-        self.R1color1 = self.TreeMain.tree.item('I00F','value')[0]
-        self.R1color2 = self.TreeMain.tree.item('I010','value')[0]
-        self.R1color3 = self.TreeMain.tree.item('I011','value')[0]
-        self.PrincColorT2 = self.TreeMain.tree.item('I013','value')[0]
-        self.R2color1 = self.TreeMain.tree.item('I014','value')[0]
-        self.R2color2 = self.TreeMain.tree.item('I015','value')[0]
-        self.R2color3 = self.TreeMain.tree.item('I016','value')[0]
-        self.DEBUG = self.TreeMain.tree.item('I018','value')[0]
-        self.EXECMode = self.TreeMain.tree.item('I019','value')[0]
+        self.OffSetBord = self.TreeMain.tree.item('I008','value')[0]
+        self.OffSetErode = self.TreeMain.tree.item('I009','value')[0]
+        self.BINThresh = int(self.TreeMain.tree.item('I00A','value')[0])
+        self.MatrixTop = int(self.TreeMain.tree.item('I00B','value')[0])
+        self.DEBUGalg = self.TreeMain.tree.item('I00C','value')[0]
+        self.VertField =self.TreeMain.tree.item('I00E','value')[0]
+        self.DefCam = self.TreeMain.tree.item('I00F','value')[0]
+        self.CalColor = self.TreeMain.tree.item('I011','value')[0]
+        self.PrincColorT1 = self.TreeMain.tree.item('I014','value')[0]
+        self.R1color1 = self.TreeMain.tree.item('I015','value')[0]
+        self.R1color2 = self.TreeMain.tree.item('I016','value')[0]
+        self.R1color3 = self.TreeMain.tree.item('I017','value')[0]
+        self.PrincColorT2 = self.TreeMain.tree.item('I019','value')[0]
+        self.R2color1 = self.TreeMain.tree.item('I01A','value')[0]
+        self.R2color2 = self.TreeMain.tree.item('I01B','value')[0]
+        self.R2color3 = self.TreeMain.tree.item('I01C','value')[0]
+        self.DEBUG = self.TreeMain.tree.item('I01E','value')[0]
+        self.EXECMode = self.TreeMain.tree.item('I01F','value')[0]
         
         
         #Configurando as entradas para a forma mais genêrica
@@ -55,6 +63,13 @@ class Emulator:
         self.R2color3 = self.format_var(self.R2color3)
         self.EXECMode = self.format_var(self.EXECMode)
         self.DEBUG = self.format_var(self.DEBUG)
+        self.DEBUGalg = self.format_var(self.DEBUGalg)
+        
+        #Observando Debug
+        if(self.DEBUGalg == 'true'):
+            self.DEBUGA = True
+        else:
+            self.DEBUGA == False
         
         
         #Observa qual modo o emulador foi configurado.
@@ -82,17 +97,28 @@ class Emulator:
         ImgPath: {self.ImgPath}
         VideoPath: {self.VideoPath}
         UseMode: {self.UseMode}
+        
+        OffSetBord: {self.OffSetBord}
+        OffSetErode:{self.OffSetErode}
+        BINThresh:{self.BINThresh}
+        MatrixTop:{self.MatrixTop}
+        DEBUGalg:{self.DEBUGalg}
+        
         VertField: {self.VertField}
         DefCam: {self.DefCam}
+        
         CalColor: {self.CalColor}
+        
         PrincColorT1: {self.PrincColorT1}
         R1color1: {self.R1color1}
         R1color2: {self.R1color2}
         R1color3: {self.R1color3}
+        
         PrincColorT2: {self.PrincColorT2}
         R2color1: {self.R2color1}
         R2color2: {self.R2color2}
         R2color3: {self.R2color3}
+        
         DEBUG: {self.DEBUG}
         EXECMode: {self.EXECMode}
         """.encode('utf-8')
@@ -109,12 +135,13 @@ class Emulator:
             print('[EMULADOR] Emulador em modo de processamento de imagem da Camera USB')
             #Configurando Viewer para modo de exibição de câmera            
             #Entrada do vídeo
+            self.capture = cv2.VideoCapture(self.IdCap)
+            self.processUSB()
             self.btn_run.pack_forget() # torna o botão "run" invisível
             self.btn_stop.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
-            self.pause = False #Camera Não pausada
+            self.isRuningCam = True #Camera Não pausada
             self.delay = 14 #14ms
             
-            self.startCameraThread()
             
         elif(self.Mode ==  MODE_IMAGE): #Modo Imagem
             print('[EMULADOR] Emulador em modo de processamento de Imagem')
@@ -146,10 +173,10 @@ class Emulator:
         if(self.Mode== MODE_USB_CAM): #Modo camera
             #Configurando Viewer para modo de exibição de câmera
             #Entrada do vídeo
-            self.stopCameraThread()
+            self.isRuningCam = False #Camera Não pausada
+            self.capture.release() #Libera a câmera
             self.btn_run.pack_forget() # torna o botão "run" invisível
-            self.btn_stop.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
-            self.pause = True #Camera Não pausada
+            self.btn_stop.pack(fill=BOTH, expand=1) # torna o botão "stop" 
             
         elif(self.Mode ==  MODE_IMAGE): #Modo Imagem
             #Configurar viewer para modo de exibição imagem
@@ -180,25 +207,25 @@ class Emulator:
     #Definindo processos do emulador
     #processo para Camera
     def processUSB(self):
-        #Iniciando uma nova thread para esse processamento.
-        while self.isRuningCam:
-            try:
-                ret, frame = self.capture.read()
-                if not ret:
-                    #Exibindo imagem
-                    self.Viewer.show(frame)
-                self.Viewer.window.after(self.delay,self.processUSB)
-            except:
-                print('[EMULADOR] Ocorreu um erro')
-                break
-        self.capture.release()
+        ret, frame = self.capture.read()
+        if self.isRuningCam and ret:
+            self.Viewer.show(frame)
+        self.Viewer.window.after(self.delay, self.processUSB)
         
     #Processo para imagem
     def processImage(self):
-        print(self.ImgPath)
-        img = cv2.imread(self.ImgPath)
-        self.Viewer.show(img)
-        print("[EMULADOR] Processando imagem")
+        print("[EMULADOR] Processando imagem: ",self.ImgPath)
+        try:
+            img = cv2.imread(self.ImgPath)
+            try:
+                bin, frameRed, rect_vert, coorVetor = detect_field(img, self.DEBUGA, int(self.OffSetBord), int(self.OffSetErode),self.BINThresh,self.MatrixTop)
+                self.Viewer.show(img)
+            except:    
+                print("[EMULADOR] Não foi possível acessar a imagem binaria")
+
+        except:
+            print("[EMULADOR] Não foi possível acessar o caminho da imagem. Por favor, coloque outro.")
+
     
     #Processo para vídeo
     def processVideo(self):
@@ -208,10 +235,13 @@ class Emulator:
     
     #Definição de threads para exibição do processamento
     def startCameraThread(self):
-        self.isRuningCam = True
-        self.capture = cv2.VideoCapture(self.IdCap)
-        self.thread = threading.Thread(target=self.processUSB)
-        self.thread.start()
+        try:
+            self.isRuningCam = True
+            self.capture = cv2.VideoCapture(self.IdCap)
+            self.thread = threading.Thread(target=self.processUSB)
+            self.thread.start()
+        except:
+            print("Tem erro nessa linha")
     
     #parar a thread da camera
     def stopCameraThread(self):

@@ -147,7 +147,7 @@ class App():
         self.btn_stop.pack_forget()
         
         #Medida de segurança para manter a variável sempre bem definida.
-        self.menu.att_node_id('I019','Parado')
+        self.menu.att_node_id('I01F','Parado')
         self.menu.save_to_json('config')
         
     
@@ -196,6 +196,13 @@ class App():
         self.menu.add_node(EntryData,'ImagePath','Imagem Path', value='---')
         self.menu.add_node(EntryData,'VideoPath','Vídeo Path', value='---')
         self.menu.add_node(EntryData,'UseMode','Modo de Uso', value='Camera')
+        #Calibração do algorítmo de reconhecimento
+        AlgRec = self.menu.add_node(SysVision,'Algoritm','Calibração do algorítmo',value='')
+        self.menu.add_node(AlgRec,'offsetW','Borda da janela', value='10')
+        self.menu.add_node(AlgRec,'offSetErode','offSet da Erosão', value='3')
+        self.menu.add_node(AlgRec,'Threshold','Binarização Threshold', value='245')
+        self.menu.add_node(AlgRec,'DimMatrx','Dim. Matriz TOPHAT', value='25')
+        self.menu.add_node(AlgRec,'DebugAlg','Debug do Algorítmo', value='False')     
         #Calibração da câmera - FILHO DO SYS
         CalCamera=self.menu.add_node(SysVision,'CamCalibration','Calibração da Câmera', value='')
         self.menu.add_node(CalCamera,'FieldVertices','Extremos do Campo', value='- , -, -, -')
@@ -215,6 +222,7 @@ class App():
         self.menu.add_node(Team2,'T2Bot1','T2_robo 1',value='Verde')
         self.menu.add_node(Team2,'T2Bot2','T2_robo 2',value='Roxo')
         self.menu.add_node(Team2,'T2Bot3','T2_robo 3',value='Rosa')
+        
         #Configurações do Emulador - FILHO DO SYS
         ConfigEmulator=self.menu.add_node(SysVision,'EmulatorConfig','Configurações do Emulador', value='')
         self.menu.add_node(ConfigEmulator,'Debug','Debug', value='False')
@@ -272,7 +280,7 @@ class App():
         self.btn_stop.pack_forget() # torna o botão "run" invisível
         self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
         
-        self.menu.att_node_id('I019','Parado')
+        self.menu.att_node_id('I01F','Parado')
         self.menu.save_to_json('config')
 
     #Função para carregar os dados da árvore em conjuntos chave/valor

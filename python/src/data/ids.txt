@@ -4,19 +4,24 @@ CamUSBPath              I003
 ImgPath                 I004
 VideoPath               I005  
 UseMode                 I006
-VertField               I008
-DefCam                  I009
-CalColor                I00B
-PrincColorT1            I00E
-R1color1                I00F
-R1color2                I010
-R1color3                I011
-PrincColorT2            I013
-R2color1                I014
-R2color2                I015
-R2color3                I016
-DEBUG                   I018
-EXECMode                I019
+OffSetBordW             I008
+OffSetErode             I009
+BINThresh               I00A
+MatrixTop               I00B
+DEBUGAlg                I00C
+VertField               I00E
+DefCam                  I00F
+CalColor                I011
+PrincColorT1            I014
+R1color1                I015
+R1color2                I016
+R1color3                I017
+PrincColorT2            I019
+R2color1                I01A
+R2color2                I01B
+R2color3                I01C
+DEBUG                   I01E
+EXECMode                I01F
 ------------------------------------------------------
 Interpretador: Python 3.9.13
 
@@ -31,3 +36,6 @@ Bibliotecas necessárias:
 -PIL;
 
 Por favor, instalar essas bibliteocas.
+
+#Atualmente os maiores erros do código está em executar a camera USB e 
+exibir na janela de view

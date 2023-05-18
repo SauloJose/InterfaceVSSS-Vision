@@ -10,3 +10,4 @@ import base64
 import unidecode
 from VisionSystem import *
 import threading
+from detect import *

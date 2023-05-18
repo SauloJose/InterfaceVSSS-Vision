@@ -28,7 +28,7 @@ class TreeMenu(Frame):
     
     #Evento de duplo clique:
     def on_double_click(self, event):
-        editable_items = ['Câmera USB Path','Imagem Path','Vídeo Path','Modo de Uso','Cor','Cor Principal T1', 'Cor Principal T2','T1_robo 1','T1_robo 2','T1_robo 3','T2_robo 1','T2_robo 2','T2_robo 3','Debug']
+        editable_items = ['Câmera USB Path','Imagem Path','Vídeo Path','Modo de Uso','Cor','Cor Principal T1', 'Cor Principal T2','T1_robo 1','T1_robo 2','T1_robo 3','T2_robo 1','T2_robo 2','T2_robo 3','Debug','Borda da janela','offSet da Erosão','Debug do Algorítmo','Binarização Threshold','Dim. Matriz TOPHAT']
         item = self.tree.focus()
         if item:
             if self.tree.item(item, 'text') in editable_items:
