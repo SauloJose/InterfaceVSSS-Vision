@@ -194,6 +194,7 @@ class App():
         with open('config.json', 'w',encoding="utf-8") as f:
             json.dump(self.data, f,ensure_ascii=False)
         print('[APP] config salvas com sucesso!')
+        self.Emulador.load_vars()
 
     #Função base para construír a árvore padrão
     def build_tree_menu(self):

@@ -216,7 +216,6 @@ class Emulator:
     #Definindo processos do emulador
     #processo para Camera
     def processUSB(self):
-        print(self.DEBUGA)
         ret, self.frame = self.capture.read()
         if self.isRuningCam and ret:
         #Apenas detectar o campo por via de dúvidas

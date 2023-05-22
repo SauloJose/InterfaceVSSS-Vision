@@ -309,11 +309,15 @@ def detect_field(img, debug, offSetWindow=10, offSetErode=0, dimMatrix=25, Trash
                 # Se o polígono tem 4 vértices, então é um retângulo
                 if len(approx) == 4:
                     try:
-                        # Extrair os vértices do retângulo
+                        # Extrair os vértices do retângulo [1 2 3 4]
                         rect_vertices = np.array([approx[0][0], approx[1][0], approx[2][0], approx[3][0]], dtype=np.int32)
-
+                        
+                        # pontosIniciais = np.float32([[x-d,y-d],[x+w+d,y-d],[x-d,y+h+d],[x+w+d,y+h+d]])
+                        # novosExtremos = np.float32([[0,0],[w,0],[0,h],[w,h]])
+                        #coor vetor: [x,y,w,h]
+                        dd = offSetWindow
                         #Vértices reais na imagem real
-                        rect_vertices_true =rect_vertices+np.array([[coorVetor[0],coorVetor[1]], [coorVetor[0],coorVetor[1]], [coorVetor[0],coorVetor[1]], [coorVetor[0],coorVetor[1]]], dtype=np.int32)
+                        rect_vertices_true =rect_vertices+np.array([[coorVetor[0]-dd,coorVetor[1]-dd], [coorVetor[0]-dd,coorVetor[1]+dd], [coorVetor[0]+dd,coorVetor[1]+dd], [coorVetor[0]+dd,coorVetor[1]-dd]], dtype=np.int32)
                     
                         if(debug == True):
                             # Desenhar os vértices do retângulo na imagem original
