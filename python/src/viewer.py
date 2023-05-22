@@ -38,7 +38,7 @@ class MyViewer:
         
         # Definir o tamanho máximo desejado
         max_width = 748
-        max_height = 510
+        max_height = 480
         
         # Calcular a porcentagem de redução com base nas dimensões atuais
         percent_reduction = min(max_width / width, max_height / height)

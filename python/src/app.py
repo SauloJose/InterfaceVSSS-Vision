@@ -41,9 +41,11 @@ class App():
         #Gerando Emulador
         #Configurando Viewer
         self.viewer  = MyViewer(self.aba1)  
+        self.debugViewer = MyViewer(self.aba2)
+        self.debugViewerR = MyViewer(self.aba3)
         
         #Criando emulador
-        self.Emulador = Emulator(self.menu, self.viewer, 0, self.btn_run, self.btn_stop)
+        self.Emulador = Emulator(self.menu, self.viewer, self.debugViewer, self.debugViewerR,0, self.btn_run, self.btn_stop)
         
         #executando looping
         root.mainloop()
@@ -68,6 +70,9 @@ class App():
         #Setando frame com coordenadas dos robôs
         self.bots_frame = Frame(self.root, bg="white")
         self.bots_frame.place(relx=0.31,rely=0.72, relwidth=0.68,relheight=0.265)
+        
+        #Ícone
+        self.root.iconbitmap('src/data/olho.ico')
 
     #definindo entradas
     def frame_config(self):
@@ -76,7 +81,7 @@ class App():
         self.action_frame.place(relx=0,rely=0, relwidth=1,relheight=0.90)
 
         #frame para emular
-        self.emulate_frame=Frame(self.config_frame, bg="red")
+        self.emulate_frame=Frame(self.config_frame, bg="white")
         self.emulate_frame.place(relx=0,rely=0.90, relwidth=1,relheight=0.10)
     
     #Configurando os widgets do frame de imagem
@@ -85,13 +90,16 @@ class App():
         self.abas = ttk.Notebook(self.image_frame)
         self.aba1 = Frame(self.abas)
         self.aba2 = Frame(self.abas)
-
+        self.aba3 = Frame(self.abas)
+        
         #Configuração das abas
         self.aba1.configure(background="black")
         self.aba2.configure(background="black")
+        self.aba3.configure(background="black")
 
         self.abas.add(self.aba1, text="View")
         self.abas.add(self.aba2, text="Debug")
+        self.abas.add(self.aba3, text="Review")
 
         self.abas.place(relx=0, rely=0, relwidth=1, relheight=1)
     
@@ -271,7 +279,7 @@ class App():
 
         #Gerando o Emulador e dando início a ele.    
         self.Emulador.init() #Inicializa o emulador
-        self.menu.att_node_id('I019','Em execução.')
+        self.menu.att_node_id('I01F','Em execução.')
         self.menu.save_to_json('config')
 
     def stop_emulate(self):

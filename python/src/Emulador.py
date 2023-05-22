@@ -5,12 +5,14 @@ from viewer import MyViewer
 #Classe para o emulador, com base nos dados carregados...
 #Carrego a treeView, e tiro os dados dela, assim posso iniciar variáveis da emulação.
 class Emulator:
-    def __init__(self, TreeMenu: TreeMenu, Viewer: MyViewer, IdCap: int, btn_run: Button, btn_stop: Button):
+    def __init__(self, TreeMenu: TreeMenu, Viewer: MyViewer, DebugViewer: MyViewer, ResulViewer: MyViewer, IdCap: int, btn_run: Button, btn_stop: Button):
         #Recuperando as variáveis do emulador, considerando que é uma treeview
         #Carregando como valores internos do Emulador.
         print('[EMULADOR] Emulador foi construído')
         self.TreeMain = TreeMenu
         self.Viewer = Viewer
+        self.DebugViewer = DebugViewer
+        self.ResulViewer= ResulViewer
         self.IdCap = IdCap
         self.btn_run = btn_run
         self.btn_stop = btn_stop
@@ -22,6 +24,8 @@ class Emulator:
         self.delay = 14 #ms
         #configurando o viewer
         self.Viewer.config()
+        self.DebugViewer.config()
+        self.ResulViewer.config()
         
     #Método para carregar as variáveis internas que foram salvas no arquivo config.json
     def load_vars(self):
@@ -30,8 +34,8 @@ class Emulator:
         self.ImgPath = self.TreeMain.tree.item('I004','value')[0]
         self.VideoPath = self.TreeMain.tree.item('I005','value')[0]
         self.UseMode = self.TreeMain.tree.item('I006','value')[0]
-        self.OffSetBord = self.TreeMain.tree.item('I008','value')[0]
-        self.OffSetErode = self.TreeMain.tree.item('I009','value')[0]
+        self.OffSetBord = int(self.TreeMain.tree.item('I008','value')[0])
+        self.OffSetErode = int(self.TreeMain.tree.item('I009','value')[0])
         self.BINThresh = int(self.TreeMain.tree.item('I00A','value')[0])
         self.MatrixTop = int(self.TreeMain.tree.item('I00B','value')[0])
         self.DEBUGalg = self.TreeMain.tree.item('I00C','value')[0]
@@ -65,11 +69,14 @@ class Emulator:
         self.DEBUG = self.format_var(self.DEBUG)
         self.DEBUGalg = self.format_var(self.DEBUGalg)
         
+        #Tratando as strings
         #Observando Debug
         if(self.DEBUGalg == 'true'):
             self.DEBUGA = True
+        elif(self.DEBUGalg == 'false'):
+            self.DEBUGA = False
         else:
-            self.DEBUGA == False
+            self.DEBUGA = False
         
         
         #Observa qual modo o emulador foi configurado.
@@ -99,10 +106,10 @@ class Emulator:
         UseMode: {self.UseMode}
         
         OffSetBord: {self.OffSetBord}
-        OffSetErode:{self.OffSetErode}
-        BINThresh:{self.BINThresh}
-        MatrixTop:{self.MatrixTop}
-        DEBUGalg:{self.DEBUGalg}
+        OffSetErode: {self.OffSetErode}
+        BINThresh: {self.BINThresh}
+        MatrixTop: {self.MatrixTop}
+        DEBUGalg: {self.DEBUGalg}
         
         VertField: {self.VertField}
         DefCam: {self.DefCam}
@@ -129,6 +136,7 @@ class Emulator:
     def init(self):
         print("[EMULADOR] Configurando variaveis")
         self.Viewer.config()
+        self.DebugViewer.config()
         
         #Inicializa o viewer
         if(self.Mode== MODE_USB_CAM): #Modo camera
@@ -136,11 +144,11 @@ class Emulator:
             #Configurando Viewer para modo de exibição de câmera            
             #Entrada do vídeo
             self.capture = cv2.VideoCapture(self.IdCap)
-            self.processUSB()
             self.btn_run.pack_forget() # torna o botão "run" invisível
             self.btn_stop.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
             self.isRuningCam = True #Camera Não pausada
             self.delay = 14 #14ms
+            self.processUSB()
             
             
         elif(self.Mode ==  MODE_IMAGE): #Modo Imagem
@@ -197,6 +205,7 @@ class Emulator:
         #Configurando para base novamente
         self.Mode = MODE_DEFAULT
         self.Viewer.default_mode()
+        self.DebugViewer.default_mode()
 
     #Formatando valores para o caso mínimo
     def format_var(self, var):
@@ -207,30 +216,68 @@ class Emulator:
     #Definindo processos do emulador
     #processo para Camera
     def processUSB(self):
-        ret, frame = self.capture.read()
+        print(self.DEBUGA)
+        ret, self.frame = self.capture.read()
         if self.isRuningCam and ret:
+        #Apenas detectar o campo por via de dúvidas
+            binary_treat, frame, rect_vertices, frame_reduce = detect_field(self.frame, self.DEBUGA,self.OffSetBord,self.OffSetErode, self.MatrixTop, self.BINThresh)
             self.Viewer.show(frame)
+            self.DebugViewer.show(binary_treat)
+            self.ResulViewer.show(frame_reduce)
+
         self.Viewer.window.after(self.delay, self.processUSB)
         
     #Processo para imagem
     def processImage(self):
         print("[EMULADOR] Processando imagem: ",self.ImgPath)
+
+        #Chama o algorítmo
+        '''
         try:
-            img = cv2.imread(self.ImgPath)
+            self.img = load_image(self.ImgPath)
             try:
-                bin, frameRed, rect_vert, coorVetor = detect_field(img, self.DEBUGA, int(self.OffSetBord), int(self.OffSetErode),self.BINThresh,self.MatrixTop)
-                self.Viewer.show(img)
-            except:    
-                print("[EMULADOR] Não foi possível acessar a imagem binaria")
-
+                #Detectando Campo
+        
+                binary_treat, frame, rect_vertices = detect_field(self.img, False,self.OffSetBord,self.OffSetErode, self.MatrixTop, self.BINThresh)
+                try:
+                    #Detectando bola
+                    img, ball, binaryBall = detect_ball(frame, orange, True)
+                    try:
+                        #Detectando players
+                        imgDebug, binaryPlayer, playersCount, AlliesCount, EnemiesCount = detect_players(img, binaryBall, yellow, purple, True)
+                        #Exibindo
+                        self.Viewer.show(imgDebug)
+                        self.DebugViewer.show(binaryPlayer)
+                    except:
+                        print("Ocorreu um problema em detectar os jogadores")
+                        self.Viewer.default_mode()
+                        self.DebugViewer.default_mode()
+                except:
+                    print("Ocorreu um problema em detectar a bola")
+                    self.Viewer.default_mode()
+                    self.DebugViewer.default_mode()
+            except:
+                print("Ocorreu um problema em detectar o campo")
+                self.Viewer.default_mode()
+                self.DebugViewer.default_mode()                    
         except:
-            print("[EMULADOR] Não foi possível acessar o caminho da imagem. Por favor, coloque outro.")
+            print("Ocorreu um problema em carregar a imagem. ")
+            
+            self.Viewer.default_mode()
+            self.DebugViewer.default_mode()
+        '''
+        self.img = load_image(self.ImgPath)
+        #Apenas detectar o campo por via de dúvidas
+        binary_treat, frame, rect_vertices, frame_reduce = detect_field(self.img, self.DEBUGA,self.OffSetBord,self.OffSetErode, self.MatrixTop, self.BINThresh)
+        self.Viewer.show(frame)
+        self.DebugViewer.show(binary_treat)
+        self.ResulViewer.show(frame_reduce)
 
-    
     #Processo para vídeo
     def processVideo(self):
         print(self.VideoPath)
         print("[EMULADOR] Processando vídeo")  
+        
     
     
     #Definição de threads para exibição do processamento

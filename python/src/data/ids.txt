@@ -39,3 +39,9 @@ Por favor, instalar essas bibliteocas.
 
 #Atualmente os maiores erros do código está em executar a camera USB e 
 exibir na janela de view
+#Testar visualizador de vídeo
+#Testar e executar algorítmos de detecção nos dados.
+
+
+#Para encontrar uma imagem, utilize o caminho relativo, exemplo:
+src/vision/campo1.jpg

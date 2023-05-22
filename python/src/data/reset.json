@@ -64,7 +64,7 @@
                     "I00A": {
                         "name": "Binarização Threshold",
                         "value": [
-                            "235"
+                            "245"
                         ],
                         "children": {}
                     },
@@ -78,7 +78,7 @@
                     "I00C": {
                         "name": "Debug do Algorítmo",
                         "value": [
-                            "False"
+                            "True"
                         ],
                         "children": {}
                     }
@@ -172,7 +172,7 @@
                             "I019": {
                                 "name": "Cor Principal T2",
                                 "value": [
-                                    "Em execução."
+                                    "Azul"
                                 ],
                                 "children": {}
                             },

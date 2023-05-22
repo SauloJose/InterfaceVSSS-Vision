@@ -10,4 +10,7 @@ import base64
 import unidecode
 from VisionSystem import *
 import threading
-from detect import *
+import numpy as np
+
+#Bibliotecas 
+from detector import *
