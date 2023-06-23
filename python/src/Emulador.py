@@ -9,6 +9,7 @@ class Emulator:
         #Recuperando as variáveis do emulador, considerando que é uma treeview
         #Carregando como valores internos do Emulador.
         print('[EMULADOR] Emulador foi construído')
+        #Recursos internos que o Emulador irá utilizar
         self.TreeMain = TreeMenu
         self.Viewer = Viewer
         self.DebugViewer = DebugViewer
@@ -16,13 +17,17 @@ class Emulator:
         self.IdCap = IdCap
         self.btn_run = btn_run
         self.btn_stop = btn_stop
+        
+        #Variáveis internas do Emulador
         self.Mode = MODE_DEFAULT
         self.isRuningCam = False #Variável para thread do vídeo
         self.DEBUGA = False
         self.thread = None
         self.capture = None
         self.delay = 14 #ms
-        #configurando o viewer
+        
+        
+        #configurando os viewers associados ao Emulador
         self.Viewer.config()
         self.DebugViewer.config()
         self.ResulViewer.config()
@@ -155,6 +160,7 @@ class Emulator:
             print('[EMULADOR] Emulador em modo de processamento de Imagem')
             #Configurar viewer para modo de exibição imagem
             #Entrada do vídeo
+            self.isRuningCam = False
             self.btn_stop.pack_forget() # torna o botão "run" invisível
             self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
             self.processImage()
@@ -162,6 +168,7 @@ class Emulator:
         elif(self.Mode == MODE_VIDEO_CAM):
             print('[EMULADOR] Emulador em modo de processamento de Video')
             #configurar viewer para modo de exibição de vídeo
+            self.isRuningCam = False
             self.btn_stop.pack_forget() # torna o botão "run" invisível
             self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
             self.processVideo()
@@ -177,23 +184,25 @@ class Emulator:
     #Método para Parar a Emulação.
     def stop(self):
         print('[EMULADOR] Emulador teve sua execução parada.')
+        if(self.capture): self.capture.release() #Libera a câmera
         #Inicializa o viewer
         if(self.Mode== MODE_USB_CAM): #Modo camera
             #Configurando Viewer para modo de exibição de câmera
             #Entrada do vídeo
             self.isRuningCam = False #Camera Não pausada
-            self.capture.release() #Libera a câmera
             self.btn_run.pack_forget() # torna o botão "run" invisível
             self.btn_stop.pack(fill=BOTH, expand=1) # torna o botão "stop" 
             
         elif(self.Mode ==  MODE_IMAGE): #Modo Imagem
             #Configurar viewer para modo de exibição imagem
-            #Entrada do vídeo
+            
+            self.isRuningCam = False #Camera Não pausada
             self.btn_stop.pack_forget() # torna o botão "run" invisível
             self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
             
         elif(self.Mode == MODE_VIDEO_CAM):
             #configurar viewer para modo de exibição de vídeo
+            self.isRuningCam = False #Camera Não pausad
             self.btn_stop.pack_forget() # torna o botão "run" invisível
             self.btn_run.pack(fill=BOTH, expand=1) # torna o botão "stop" visível
             

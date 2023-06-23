@@ -21,7 +21,7 @@
                     "I004": {
                         "name": "Imagem Path",
                         "value": [
-                            "src/vision/Slide7.PNG"
+                            "src/vision/campoOBJ3.jpg"
                         ],
                         "children": {}
                     },
@@ -35,7 +35,7 @@
                     "I006": {
                         "name": "Modo de Uso",
                         "value": [
-                            "imagem"
+                            "camera"
                         ],
                         "children": {}
                     }
@@ -57,7 +57,7 @@
                     "I009": {
                         "name": "offSet da Erosão",
                         "value": [
-                            "3"
+                            "4"
                         ],
                         "children": {}
                     },
@@ -71,7 +71,7 @@
                     "I00B": {
                         "name": "Dim. Matriz TOPHAT",
                         "value": [
-                            "30"
+                            "80"
                         ],
                         "children": {}
                     },

@@ -38,7 +38,7 @@ class TreeMenu(Frame):
                     self.tree.set(item,'Valor',entry)
                     self.nodes[item] = entry
                 self.tree.item(item,tags=())
-
+            
     #Adquirindo os dados com o get_tree_data, é uma função recursiva
     def get_tree_data(self, node_id=''):
         if node_id == '':

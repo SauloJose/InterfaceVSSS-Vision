@@ -6,7 +6,7 @@ import sys; sys.path.append('./src/')
 from app import App
 
 
-#Executando interface.
+#Criando uma instância do aplicativo
 app = App()
 
 

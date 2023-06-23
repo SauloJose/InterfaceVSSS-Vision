@@ -56,6 +56,9 @@ class App():
         self.root.configure(background="#dfe3ee")
         self.root.geometry("1100x750")
         self.root.resizable(False, False)
+        
+        #Ícone
+        self.root.iconbitmap('src/data/olho.ico')
     
     #Função para definir os frames
     def frame_window(self):
@@ -71,8 +74,10 @@ class App():
         self.bots_frame = Frame(self.root, bg="white")
         self.bots_frame.place(relx=0.31,rely=0.72, relwidth=0.68,relheight=0.265)
         
-        #Ícone
-        self.root.iconbitmap('src/data/olho.ico')
+        #Setando frame com coordenadas dos robôs
+        self.action_config_frame = Frame(self.root, bg="white")
+        self.action_config_frame.place(relx=0.31,rely=0.72, relwidth=0.68,relheight=0.265)
+        
 
     #definindo entradas
     def frame_config(self):
@@ -223,7 +228,7 @@ class App():
         ConfigTeam=self.menu.add_node(SysVision,'TeamConfigs','Configurações dos Times', value='')
         Team1= self.menu.add_node(ConfigTeam,'Team1','Time 1', value='')
         self.menu.add_node(Team1,'Team1Color','Cor Principal T1',value='Azul')
-        self.menu.add_node(Team1,'T1Bot1','T1_robo 1',value='roxo')
+        self.menu.add_node(Team1,'T1Bot1','T1_robo 1',value='Roxo')
         self.menu.add_node(Team1,'T1Bot2','T1_robo 2',value='Verde')
         self.menu.add_node(Team1,'T1Bot3','T1_robo 3',value='Vermelho')
         Team2= self.menu.add_node(ConfigTeam,'Team2','Time 2', value='')
@@ -269,6 +274,7 @@ class App():
         self.save_button.place(relx=0.3, rely=0.90, relwidth=0.4, relheight=0.05)
 
     #MISSÃO ATUAL -> BOTÃO DE RUN E STOP.
+    #Verificar se foi escolhido o modo de configuração de cores.
     def init_emulate(self):
         #Iniciando Emulação
         print("[APP] Emulação Iniciada")
