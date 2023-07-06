@@ -12,6 +12,10 @@ MODE_IMAGE:int = 4
 MODE_EMULATE_COLOR:int = 5
 
 
+#Modo de execução da interface
+MODE_INTER_EMULATE_COLOR: int = 3 
+MODE_INTER_DEFAULT: int = 0
+
 
 
 #Definição de array de cores (dark, light)

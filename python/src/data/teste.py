@@ -5,7 +5,7 @@ import colorsys
 
 def update_color(event=None):
     # Obter os valores HSV dos trakebars
-    h = int(h_scale.get()),0
+    h = int(h_scale.get())
     s = int(s_scale.get())
     v = int(v_scale.get())
 

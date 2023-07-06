@@ -1,17 +1,26 @@
 from modulos import *
-
+from VisionSystem import *
 
 #Criando a classe de menu em forma de árvore
 class TreeMenu(Frame):
-    def __init__(self, master=None, **kwargs):
+    def __init__(self, master=None, app_edit=None, **kwargs):
         super().__init__(master, **kwargs)
         self.tree = Treeview(self, columns=('Valor',))
+        self.app_edit = app_edit
+        
+        #gerando uma variável responsável por informar ao app qual estado de execução o programa está
+        self.state = MODE_INTER_DEFAULT #Inicialmente por padrão
+        
+        
         self.tree.heading('#0',text="Variável")
         self.tree.heading('Valor', text='Valor')
         self.tree.column('Valor',stretch=False,minwidth=50, width=100)
         self.tree.bind("<Double-1>", self.on_double_click)
+        self.tree.bind("<Double-1>", self.change_UI)
         self.tree.pack(fill=BOTH, expand=True)
         self.nodes={}
+        
+    
     
     #Adicionando um nó
     def add_node(self, parent,id, name, value):
@@ -38,7 +47,24 @@ class TreeMenu(Frame):
                     self.tree.set(item,'Valor',entry)
                     self.nodes[item] = entry
                 self.tree.item(item,tags=())
-            
+    
+    #Evento de clique para modificar os valores:
+    def change_UI  (self, event):
+        editable_items = ["Calibração das Cores"]
+        item = self.tree.focus()
+        if item:
+            if self.tree.item(item,'text') in editable_items:
+                #Caso isso aconteça, ele irá exibir um frame para modificar as cores e verificar o código
+                print("Calibrar a cor foi clicada")
+                self.app_edit.pack()
+                self.state = MODE_INTER_EMULATE_COLOR
+            else:
+                #Em caso negativo, ele não apenas irá retornar à configuração padrão
+                print("Escolher a cor não foi encontrada")
+                self.app_edit.pack_forget()
+                self.state = MODE_INTER_DEFAULT
+        
+        
     #Adquirindo os dados com o get_tree_data, é uma função recursiva
     def get_tree_data(self, node_id=''):
         if node_id == '':

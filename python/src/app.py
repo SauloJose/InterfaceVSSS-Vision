@@ -66,18 +66,18 @@ class App():
         self.config_frame = Frame(self.root, bg="white")
         self.config_frame.place(relx=0.01,rely=0.015, relwidth=0.29,relheight=0.97)
         #Gerando três subframes dentro 
+        
         #Setando frame para imagem
         self.image_frame = Frame(self.root,bg="white")
         self.image_frame.place(relx=0.31,rely=0.015, relwidth=0.68,relheight=0.68)
-
-        #Setando frame com coordenadas dos robôs
-        self.bots_frame = Frame(self.root, bg="white")
-        self.bots_frame.place(relx=0.31,rely=0.72, relwidth=0.68,relheight=0.265)
+        
+        #Setando configuração padrão
+        self.algo = Frame(self.root, bg="white")
+        self.algo.place(relx=0.31,rely=0.72, relwidth=0.68,relheight=0.265)
         
         #Setando frame com coordenadas dos robôs
-        self.action_config_frame = Frame(self.root, bg="white")
+        self.action_config_frame = Frame(self.root, bg="gray")
         self.action_config_frame.place(relx=0.31,rely=0.72, relwidth=0.68,relheight=0.265)
-        
 
     #definindo entradas
     def frame_config(self):
@@ -88,7 +88,7 @@ class App():
         #frame para emular
         self.emulate_frame=Frame(self.config_frame, bg="white")
         self.emulate_frame.place(relx=0,rely=0.90, relwidth=1,relheight=0.10)
-    
+        
     #Configurando os widgets do frame de imagem
     def widgets_image_frame(self):
         #Criando as abas
@@ -113,7 +113,7 @@ class App():
         #Gerando treeview
         self.exec = execution
         # Define o estilo para o Treeview
-        self.menu = TreeMenu(self.action_frame)
+        self.menu = TreeMenu(self.action_frame, self.action_config_frame)
         self.menu.pack(fill=BOTH, expand=True)
         #Sistema de visão - PAI GERAL
         if(self.exec):
