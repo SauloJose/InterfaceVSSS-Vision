@@ -19,8 +19,23 @@ class Emulator:
         self.btn_stop = btn_stop
         
         #Variáveis internas do Emulador
-        self.Mode = MODE_DEFAULT
+        #Variável de aquisição de dados externos
+        self.Mode = MODE_DEFAULT 
+            #Pode ser MODE_USB_CAM | MODE_VIDEO_CAM | MODE_IMAGE
+        
+        #Variável de processamento dos dados, iniciando com MODE_INTER_EMULATE
+            # MODE_INTER_EMULATE_DEFAULT: Carrega dados e aplica algorítmo de detecção
+            # MODE_INTER_EMULATE_CALIBRATION: Carrega dados e aplica algorítmo de calibração de cores
+            # MODE_INTER_EMULATE_ADJUST: Carrega dados e aplica algorítmo de correção
+        
+        self.ModeEmulator = MODE_INTER_EMULATE_DEFAULT
+        
+        
+        
+        #Verifica se a câmera está acionada
         self.isRuningCam = False #Variável para thread do vídeo
+        
+        #Variáveis de captura da câmera
         self.DEBUGA = False
         self.thread = None
         self.capture = None
@@ -239,41 +254,6 @@ class Emulator:
     def processImage(self):
         print("[EMULADOR] Processando imagem: ",self.ImgPath)
 
-        #Chama o algorítmo
-        '''
-        try:
-            self.img = load_image(self.ImgPath)
-            try:
-                #Detectando Campo
-        
-                binary_treat, frame, rect_vertices = detect_field(self.img, False,self.OffSetBord,self.OffSetErode, self.MatrixTop, self.BINThresh)
-                try:
-                    #Detectando bola
-                    img, ball, binaryBall = detect_ball(frame, orange, True)
-                    try:
-                        #Detectando players
-                        imgDebug, binaryPlayer, playersCount, AlliesCount, EnemiesCount = detect_players(img, binaryBall, yellow, purple, True)
-                        #Exibindo
-                        self.Viewer.show(imgDebug)
-                        self.DebugViewer.show(binaryPlayer)
-                    except:
-                        print("Ocorreu um problema em detectar os jogadores")
-                        self.Viewer.default_mode()
-                        self.DebugViewer.default_mode()
-                except:
-                    print("Ocorreu um problema em detectar a bola")
-                    self.Viewer.default_mode()
-                    self.DebugViewer.default_mode()
-            except:
-                print("Ocorreu um problema em detectar o campo")
-                self.Viewer.default_mode()
-                self.DebugViewer.default_mode()                    
-        except:
-            print("Ocorreu um problema em carregar a imagem. ")
-            
-            self.Viewer.default_mode()
-            self.DebugViewer.default_mode()
-        '''
         self.img = load_image(self.ImgPath)
         #Apenas detectar o campo por via de dúvidas
         binary_treat, frame, rect_vertices, frame_reduce = detect_field(self.img, self.DEBUGA,self.OffSetBord,self.OffSetErode, self.MatrixTop, self.BINThresh)
